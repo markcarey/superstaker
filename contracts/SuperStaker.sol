@@ -64,16 +64,16 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         console.log("healthFactor", healthFactor);
 
 
-        uint256 loanAmt = 100;  // TODO: calc flash loan amt
+        uint256 loanAmt = 1000000000000000000;  // TODO: calc flash loan amt
 
-        address[] memory assets = new address[](2);
+        address[] memory assets = new address[](1);
         assets[0] = address(weth);
 
-        uint256[] memory amounts = new uint256[](2);
+        uint256[] memory amounts = new uint256[](1);
         amounts[0] = loanAmt;
 
         // 0 = no debt, 1 = stable, 2 = variable
-        uint256[] memory modes = new uint256[](2);
+        uint256[] memory modes = new uint256[](1);
         modes[0] = 2;
 
         address onBehalfOf = msg.sender;
@@ -103,6 +103,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         override
         returns (bool)
     {
+        console.log("start exec");
         require(msg.sender == address(pool), 'CALLER_MUST_BE_LENDING_POOL');
         console.log("initiator", initiator);
         console.log("amount", amounts[0]);
