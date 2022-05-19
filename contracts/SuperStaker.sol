@@ -11,21 +11,22 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import "./interfaces/aave/ILendingPool.sol";
-import "./interfaces/aave/IDataProvider.sol";
+//import "./interfaces/aave/IDataProvider.sol";
 import "./interfaces/aave/IFlashLoanReceiver.sol";
 import "./interfaces/lido/IStETH.sol";
 import "./interfaces/IWETH9.sol";
 
 contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
     using SafeMath for uint256;
+    using SafeERC20 for IStETH;
 
     IStETH public steth;
     IWETH9 public weth;
     address public referral;
 
     // Aave:
-    address public aToken;
-    address public varDebtToken;
+    //address public aToken;
+    //address public varDebtToken;
     ILendingPool public pool;
 
     constructor(address payable _weth, address _steth, address _dataProvider, address _pool, address _referral) {
@@ -34,16 +35,28 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         referral = _referral;
 
         pool = ILendingPool(_pool);
-        (aToken,,) = IDataProvider(_dataProvider).getReserveTokensAddresses(_steth);
-        (,,varDebtToken) = IDataProvider(_dataProvider).getReserveTokensAddresses(_weth);
+        //(aToken,,) = IDataProvider(_dataProvider).getReserveTokensAddresses(_steth);
+        //(,,varDebtToken) = IDataProvider(_dataProvider).getReserveTokensAddresses(_weth);
 
         steth.approve(_pool, 2**256 - 1);
     }
 
     // @dev SuperStakes native ETH sent to the function
-    function stake() payable external nonReentrant {
+    function stake(uint256 factor) payable external nonReentrant {
         require(msg.value != 0, "ZERO_DEPOSIT");
+        uint256 loanAmt = msg.value.mul(factor).div(100);
+        _stake(loanAmt);      
+    }
 
+    // @dev sender already has stETH and want to superStake
+    function superStake(uint256 shares, uint256 factor) external nonReentrant {
+        // @dev tranfer stETH to this contract (temporaily) - must get approval first
+        steth.safeTransferFrom(msg.sender, address(this), shares);
+        uint256 loanAmt = shares.mul(factor).div(100);
+        _stake(loanAmt);   
+    }
+
+    function _stake(uint256 loanAmt) internal {
         // @dev stake ETH in Lido
         //uint256 shares = steth.submit{value: msg.value}(referral);
 
@@ -61,8 +74,6 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         console.log("currentLiquidationThreshold", currentLiquidationThreshold);
         console.log("ltv", ltv);
         console.log("healthFactor", healthFactor);
-
-        uint256 loanAmt = 1 ether;  // TODO: calc flash loan amt
 
         address[] memory assets = new address[](1);
         assets[0] = address(weth);
@@ -94,9 +105,6 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
             abi.encode(msg.sender),
             uint16(0)
         );
-
-
-
     }
 
     function executeOperation(
@@ -115,7 +123,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         console.log("initiator", initiator);
         console.log("amount", amounts[0]);
         console.log("premium", premiums[0]);
-        uint amountOwing = amounts[0].add(premiums[0]);
+        //uint amountOwing = amounts[0].add(premiums[0]);
 
         (address sender) = abi.decode(params, (address));
         console.log("sender", sender);
@@ -125,10 +133,10 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         console.log("ETH balance before staking", address(this).balance);
 
         // @dev stake inital msg.value + flash loan proceeds via Lido
-        uint256 shares = steth.submit{value: address(this).balance}(referral);
+        steth.submit{value: address(this).balance}(referral);
 
         // @dev deposit resulting stETH as collateral in Aave
-        pool.deposit(address(steth), shares, sender, 0);
+        pool.deposit(address(steth), steth.balanceOf(address(this)), sender, 0);
         
         return true;
     }
