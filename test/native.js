@@ -10,7 +10,7 @@ const REFERRAL = process.env.REFERRAL;
 var BN = web3.utils.BN;
 
 const signer = new ethers.Wallet(PRIVATE_KEY, ethers.provider);
-var wethAddress = "0x72b0aD009C275407873e5bc6eC7d9c382CA289Ed";
+var wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 const stethAddress = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const dataProviderAddress = "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d";
 const poolAddress = "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9";

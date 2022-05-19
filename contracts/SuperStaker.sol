@@ -42,7 +42,6 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
 
     // @dev SuperStakes native ETH sent to the function
     function stake() payable external nonReentrant {
-        address sender = msg.sender;
         require(msg.value != 0, "ZERO_DEPOSIT");
 
         // @dev stake ETH in Lido
@@ -54,7 +53,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         uint256 availableBorrowsETH,
         uint256 currentLiquidationThreshold,
         uint256 ltv,
-        uint256 healthFactor) = pool.getUserAccountData(sender);
+        uint256 healthFactor) = pool.getUserAccountData(msg.sender);
 
         console.log("totalCollateralETH", totalCollateralETH);
         console.log("totalDebtETH", totalDebtETH);
@@ -63,8 +62,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         console.log("ltv", ltv);
         console.log("healthFactor", healthFactor);
 
-
-        uint256 loanAmt = 1000000000000000000;  // TODO: calc flash loan amt
+        uint256 loanAmt = 1 ether;  // TODO: calc flash loan amt
 
         address[] memory assets = new address[](1);
         assets[0] = address(weth);
@@ -78,6 +76,15 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
 
         address onBehalfOf = msg.sender;
 
+        console.log("address(this)", address(this));
+        console.log("length", assets.length);
+        console.log("assets", assets[0]);
+        console.log("amounts", amounts[0]);
+        console.log("modes", modes[0]);
+        console.log("onBehalfOf", onBehalfOf);
+        console.logBytes(abi.encode(msg.sender));
+        console.log("referrer", uint16(0));
+
         pool.flashLoan(
             address(this),
             assets,
@@ -85,7 +92,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
             modes,
             onBehalfOf,
             abi.encode(msg.sender),
-            0
+            uint16(0)
         );
 
 
@@ -126,5 +133,8 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         return true;
     }
 
+    receive() external payable {}
+
+    fallback() external payable {}
 
 }
