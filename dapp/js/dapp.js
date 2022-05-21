@@ -16,6 +16,8 @@ var aDebtBal = 0;
 var factor = 0;
 var ratio = 1;
 var mode = "eth";
+var lidoApr = 0.038;  // TODO: get from api or contract
+var aaveWETHBorrowRate = 0.0164;  // TODO: get from api or contract
 
 // addresses:
 const stakerAddress = "0xDA3231D0Ad3dd50C1B33c167DB27e6200f2C92D0";
@@ -36,6 +38,7 @@ const aSTETH = new ethers.Contract(varATokenAddress, astethABI, provider);
 const pool = new ethers.Contract(poolAddress, poolABI, provider);
 const steth = new ethers.Contract(stethAddress, stethABI, provider);
 const poolAddressProvider = new ethers.Contract(poolAddressProviderAddress, poolAddressProviderABI, provider);
+var oracle;
 
 //var staker = new web3.eth.Contract(stakerABI, stakerAddress);
 var staker = new ethers.Contract(stakerAddress, stakerABI, provider);
@@ -67,8 +70,10 @@ async function main() {
         ethBal = await provider.getBalance(ethereum.selectedAddress);
         console.log("ETH", ethBal);
         console.log("stETH", stethBal);
-        $("#ethBal").text(eth(ethBal));
-        $("#stethBal").text(eth(stethBal));
+        //$("#ethBal").text(eth(ethBal));
+        //$("#stethBal").text(eth(stethBal));
+        const oracleAddress = await poolAddressProvider.getPriceOracle();
+        oracle = new ethers.Contract(oracleAddress, oracleABI, provider);
         $(".card-buttons button.connect").hide().next().show();
     }
 
@@ -109,36 +114,9 @@ async function connectWallet() {
     $("#status").text("Connecting...");
     if (window.ethereum) {
         //console.log("window.ethereum true");
-        if (false) {
-        window.ethereum
-            .enable()
-            .then(async result => {
-                // Metamask is ready to go!
-                //console.log(result);
-                ethersSigner = provider.getSigner();
-                console.log("Account:", await ethersSigner.getAddress());     
-                accounts = result;
-                $(".app-wallet-details button.connect span").text( abbrAddress() );
-                stethBal = await steth.balanceOf(ethereum.selectedAddress);
-                ethBal = await provider.getBalance(ethereum.selectedAddress);
-                console.log("ETH", web3.utils.fromWei(ethBal).toFixed(4));
-                console.log("stETH", web3.utils.fromWei(stethBal).toFixed(4));
-                $("#ethBal").text(eth(ethBal));
-                $("#stethBal").text(eth(stethBal));
-                //console.log(web3.utils.fromWei(wethBal));
-                $(".card-buttons button.connect").hide().next().show();
-            })
-            .catch(reason => {
-                // Handle error. Likely the user rejected the login.
-            });
-        } else {
-            await provider.send("eth_requestAccounts", []);
-            // The MetaMask plugin also allows signing transactions to
-            // send ether and pay to change state within the blockchain.
-            // For this, you need the account signer...
-            ethersSigner = provider.getSigner();
-            console.log("Account:", await ethersSigner.getAddress()); 
-        }
+        await provider.send("eth_requestAccounts", []);
+        ethersSigner = provider.getSigner();
+        //console.log("Account:", await ethersSigner.getAddress()); 
     } else {
         // The user doesn't have Metamask installed.
         console.log("window.ethereum false");
@@ -223,6 +201,9 @@ $( document ).ready(function() {
         $(".stake-eth").hide();
         $(".stake-steth").show();
         $("#amount").val(0.0);
+        $(".deposit-symbol").text("stETH");
+        $(".deposit-icon-big").attr("src", "/images/steth.png").css("width", "23px");
+        $(".deposit-icon").attr("src", "/images/steth.png").css("width", "18px");
         mode = "steth";
         return false;
     });
@@ -234,6 +215,9 @@ $( document ).ready(function() {
         $(".stake-steth").hide();
         $(".stake-eth").show();
         $("#amount").val(0.0);
+        $(".deposit-symbol").text("ETH");
+        $(".deposit-icon").attr("src", "/images/eth.svg").css("width", "13px");
+        $(".deposit-icon-big").attr("src", "/images/eth.svg").css("width", "auto");
         mode = "eth";
         return false;
     });
@@ -260,6 +244,25 @@ $( document ).ready(function() {
         return false;
     });
 
+    $("#amount, #ltv").keyup(async function(){
+        var amt = $("#amount").val();
+        var ltv = $("#ltv").val();
+        var amtInWei = ethers.utils.parseEther("" + amt);
+        $("#before").text(amt);
+        const stethInETH = await oracle.getAssetPrice(stethAddress);
+        console.log("stethInETH", stethInETH);
+        ratio = stethInETH / 1e18;
+        console.log("ratio", ratio);
+        getFactor( (parseFloat(ltv) - 1)/100, false );
+        const allowanceAmt = "" + ( amtInWei * (factor / 100) );
+        $("#debt").text( eth(allowanceAmt) );
+        const stethTotal = parseFloat(amt) + parseFloat( eth(allowanceAmt) );
+        $("#atoken").text(stethTotal);
+        var apr = ( (stethTotal * lidoApr) - (parseFloat( eth(allowanceAmt) ) * aaveWETHBorrowRate) ) / parseFloat(amt) * 100;
+        $("#apr").text(apr.toFixed(1) + "%");
+        return false;
+    });
+
     $(".stake-eth").click(async function(){
         mode = "eth";
         var amt = $("#amount").val();
@@ -275,19 +278,22 @@ $( document ).ready(function() {
             console.log(tx);
             await tx.wait();
             $("button.stake-eth").text("SuperStaked!!");
+            const atokenBal = await aSTETH.balanceOf(ethereum.selectedAddress);
+            const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
+            $("#atoken").text( eth(atokenBal) );
+            $("#debt").text( eth(debtBal) );
+            $("#after").text("After (actual):");
         } else {
             // need approval
             if ( parseFloat(ltv) > 69 ) {
                 alert("The maximum LTV allowed by Aave is 69, anon");
                 return;
             }
-            if ( !amt || parseFloat(amt) <= 0 ) {
+            if ( (amt.length < 1) || ( parseFloat(amt) <= 0 ) ) {
                 alert("Please enter an amount to SuperStake, anon");
                 return;
             }
             $("button.stake-eth").text("Approving...");
-            const oracleAddress = await poolAddressProvider.getPriceOracle();
-            const oracle = new ethers.Contract(oracleAddress, oracleABI, provider);
             const stethInETH = await oracle.getAssetPrice(stethAddress);
             console.log("stethInETH", stethInETH);
             ratio = stethInETH / 1e18;

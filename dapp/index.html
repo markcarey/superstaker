@@ -118,10 +118,10 @@
                                                             <p class="curr-text">MAX</p>
                                                         </button>
                                                         <button class="btn btn-curr ml-2"><img
-                                                                class="curr-image"
+                                                                class="curr-image deposit-icon-big"
                                                                 src="/images/eth.svg"
                                                                 alt="">
-                                                            <p class="curr-text">ETH</p>
+                                                            <p class="curr-text deposit-symbol">ETH</p>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -154,7 +154,7 @@
                                     <div class="d-grid py-3 card-buttons">
                                         <button class="btn btn-lg btn-custom-primary connect">Connect Wallet</button>
                                         <button class="btn btn-lg btn-custom-primary stake-eth hide">1 of 2: Approve</button>
-                                        <button class="btn btn-lg btn-custom-primary stake-steth hide">SuperStake stETH</button>
+                                        <button class="btn btn-lg btn-custom-primary stake-steth hide">1 of 3: Approve stETH</button>
                                     </div>
                                     <div class="price_head">
                                         <div class="price_aa">
@@ -162,34 +162,36 @@
                                                 <p class="before">Before:</p><span class="price since"></span>
                                             </div>
                                             <div class="price-list">
-                                                <p>ETH</p><span
-                                                    class="price"><span id="ethBal">0.00</span><img
+                                                <p class="deposit-symbol">ETH</p><span
+                                                    class="price"><span id="before">0.00</span><img
+                                                        class="deposit-icon" 
                                                         src="/images/eth.svg"
-                                                        alt="logo" width="13"><span>ETH</span></span><span></span>
+                                                        alt="logo" width="13"><span class="deposit-symbol">ETH</span></span><span></span>
                                             </div>
                                             <hr>
                                             <div class="price-list">
-                                                <p class="before">After:</p><span class="price since"></span>
+                                                <p id="after" class="before">After:</p><span class="price since"></span>
                                             </div>
                                             <div class="price-list">
-                                                <p>ETH</p><span
+                                                <p class="deposit-symbol">ETH</p><span
                                                     class="price"><span class="tvl">0.00</span><img
+                                                        class="deposit-icon" 
                                                         src="/images/eth.svg"
-                                                        alt="logo" width="13"><span>ETH</span></span><span></span>
+                                                        alt="logo" width="13"><span class="deposit-symbol">ETH</span></span><span></span>
                                             </div>
                                             <div class="price-list">
-                                                <p>Aave stETH</p><span class="price"><span class="balance">0</span><a href="#" class="add"><img
-                                                src="/images/steth.png"
+                                                <p>Aave stETH</p><span class="price"><span id="atoken">0</span><a href="#" class="add"><img
+                                                src="/images/asteth.png"
                                                 alt="logo" width="18"><span>aSTETH</span><img src="/images/metamask.png" alt="logo" width="13"></a></span>
                                             </div>
                                             <div class="price-list">
-                                                <p>Aave WETH Debt</p><span class="price"><span class="balance">0</span><img
+                                                <p>Aave WETH Debt</p><span class="price"><span id="debt">0</span><img
                                                 src="/images/weth.svg"
                                                 alt="logo" width="18"><span>WETH</span>
                                             </div>
                                             <hr>
                                             <div class="price-list">
-                                                <p class="before">APY (est.)</p><s<span class="price share">0.0%</span>
+                                                <p class="before">APR (est.)</p><s<span id="apr" class="price share">0.0%</span>
                                             </div>
                                         </div>
                                     </div>
