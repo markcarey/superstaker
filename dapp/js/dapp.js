@@ -8,6 +8,7 @@ var dappChain = 1; // default to Mumbai
 var userChain;
 var accounts;
 var approved = 0;
+var approvedSteth = 0;
 var delegated = 0;
 var ethBal = 0;
 var stethBal = 0;
@@ -253,7 +254,11 @@ $( document ).ready(function() {
         console.log("stethInETH", stethInETH);
         ratio = stethInETH / 1e18;
         console.log("ratio", ratio);
-        getFactor( (parseFloat(ltv) - 1)/100, false );
+        var isSteth = false;
+        if (mode == "steth") {
+            isSteth = true;
+        }
+        getFactor( (parseFloat(ltv) - 1)/100, isSteth );
         const allowanceAmt = "" + ( amtInWei * (factor / 100) );
         $("#debt").text( eth(allowanceAmt) );
         const stethTotal = parseFloat(amt) + parseFloat( eth(allowanceAmt) );
@@ -308,6 +313,64 @@ $( document ).ready(function() {
             console.log("done");
             $("button.stake-eth").text("2 of 2: SuperStake ETH");
         }
+    });
+
+    $(".stake-steth").click(async function(){
+        mode = "steth";
+        var amt = $("#amount").val();
+        var ltv = $("#ltv").val();
+        var amtInWei = ethers.utils.parseEther("" + amt);
+        console.log(ltv);
+        console.log(parseFloat(ltv));
+        console.log(parseFloat(ltv) - 1);
+        if ( approved >= amt ) {
+            $("button.stake-steth").text("Waiting...");
+            console.log("factor", factor);
+            var tx = await staker.connect(ethersSigner).superStake(amtInWei, factor);
+            console.log(tx);
+            await tx.wait();
+            $("button.stake-steth").text("SuperStaked!!");
+            const atokenBal = await aSTETH.balanceOf(ethereum.selectedAddress);
+            const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
+            $("#atoken").text( eth(atokenBal) );
+            $("#debt").text( eth(debtBal) );
+            $("#after").text("After (actual):");
+        } else {
+            // need approvals
+            if (approvedSteth >= amt) {
+                if ( parseFloat(ltv) > 69 ) {
+                    alert("The maximum LTV allowed by Aave is 69, anon");
+                    return;
+                }
+                if ( (amt.length < 1) || ( parseFloat(amt) <= 0 ) ) {
+                    alert("Please enter an amount to SuperStake, anon");
+                    return;
+                }
+                $("button.stake-eth").text("Approving...");
+                const stethInETH = await oracle.getAssetPrice(stethAddress);
+                console.log("stethInETH", stethInETH);
+                ratio = stethInETH / 1e18;
+                console.log("ratio", ratio);
+                getFactor( (parseFloat(ltv) - 1)/100, true );
+                const allowanceAmt = "" + ( amtInWei * (factor / 100) );
+                var tx = await varDebtWETH.connect(ethersSigner).approveDelegation(stakerAddress, allowanceAmt);
+                console.log(tx);
+                await tx.wait();
+                approved = parseFloat(allowanceAmt);
+                console.log("approved", approved);
+                console.log("done");
+                $("button.stake-steth").text("3 of 3: SuperStake stETH");
+            } else {
+                // need allowance for stETH
+                var tx = await steth.connect(ethersSigner).approve(stakerAddress, amtInWei);
+                console.log(tx);
+                await tx.wait();
+                approvedSteth = parseFloat(amtInWei);
+                console.log("approvedSteth", approvedSteth);
+                console.log("done");
+                $("button.stake-steth").text("2 of 3: Approve");
+            } // if approvedSteth
+        } // if approved (delegated)
     });
 
 
