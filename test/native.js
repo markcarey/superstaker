@@ -12,7 +12,6 @@ var BN = web3.utils.BN;
 const signer = new ethers.Wallet(PRIVATE_KEY, ethers.provider);
 var wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 const stethAddress = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
-const dataProviderAddress = "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d";
 const poolAddress = "0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9";
 const poolAddressProviderAddress = "0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5";
 
@@ -76,7 +75,7 @@ describe.only("Super Staking", function() {
         this.timeout(2400000);
         //await hre.network.provider.send("hardhat_reset");
         const Staker = await ethers.getContractFactory("SuperStaker");
-        staker = await Staker.deploy(wethAddress, stethAddress, dataProviderAddress, poolAddress, REFERRAL);
+        staker = await Staker.deploy(wethAddress, stethAddress, poolAddress, REFERRAL);
         console.log(staker);
         await staker.deployed();
         console.log("SuperStaker deployed to address:", staker.address);
@@ -86,10 +85,10 @@ describe.only("Super Staking", function() {
         console.log("stethInETH", stethInETH);
         ratio = stethInETH / 1e18;
         console.log("ratio", ratio);
-        getFactor(0.68, true);
+        getFactor(0.68, false);
     });
 
-    it.skip("should delegate credit to the Staker contract", async function() {
+    it("should delegate credit to the Staker contract", async function() {
         const allowanceAmt = "" + ( amt * (factor / 100) );
         console.log("allowanceAmt", allowanceAmt);
         await ( await varDebtWETH.approveDelegation(staker.address, allowanceAmt) ).wait();
@@ -99,14 +98,14 @@ describe.only("Super Staking", function() {
         expect(1).to.equal(1);
     });
   
-    it.skip("should deposit native ETH and SuperStake it", async function() {
+    it("should deposit native ETH and SuperStake it", async function() {
         await ( await staker.stake(factor, {value: amt}) ).wait();
         const data = await pool.getUserAccountData(PUBLIC_KEY);
         console.log(data);
         expect(1).to.equal(1);
     });
 
-    it.skip("should approve stETH transfer to the Staker contract", async function() {
+    it("should approve stETH transfer to the Staker contract", async function() {
         await ( await steth.approve(staker.address, amt) ).wait();
         const allowance = await steth.allowance(PUBLIC_KEY, staker.address);
         console.log(allowance);
@@ -142,7 +141,7 @@ describe.only("Super Staking", function() {
         expect(1).to.equal(1);
     });
 
-    it.skip("should log balances", async function() {
+    it("should log balances", async function() {
         var balances = {};
         balances.STETH = await steth.balanceOf(PUBLIC_KEY);
         balances.aSTETH = await aSTETH.balanceOf(PUBLIC_KEY);

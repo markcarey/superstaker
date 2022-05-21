@@ -32,7 +32,9 @@ const poolAddressProviderAddress = "0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5";
 
 const prov = {"url": "https://"+rpcURL};
 var provider = new ethers.providers.JsonRpcProvider(prov);
-provider = new ethers.providers.Web3Provider(window.ethereum);
+if (window.ethereum) {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+}
 
 const varDebtWETH = new ethers.Contract(varDebtTokenAddress, debtTokenABI, provider);
 const aSTETH = new ethers.Contract(varATokenAddress, astethABI, provider);
@@ -278,6 +280,8 @@ $( document ).ready(function() {
         console.log(parseFloat(ltv) - 1);
         if ( approved >= amt ) {
             $("button.stake-eth").text("Waiting...");
+            const atokenBeforeBal = await aSTETH.balanceOf(ethereum.selectedAddress);
+            const debtBeforeBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
             console.log("factor", factor);
             var tx = await staker.connect(ethersSigner).stake(factor, {value: amtInWei});
             console.log(tx);
@@ -285,9 +289,9 @@ $( document ).ready(function() {
             $("button.stake-eth").text("SuperStaked!!");
             const atokenBal = await aSTETH.balanceOf(ethereum.selectedAddress);
             const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
-            $("#atoken").text( eth(atokenBal) );
-            $("#debt").text( eth(debtBal) );
-            $("#after").text("After (actual):");
+            $("#atoken").text( eth(atokenBal - atokenBeforeBal) );
+            $("#debt").text( eth(debtBal - debtBeforeBal) );
+            $("#after").text("After: (actual)");
         } else {
             // need approval
             if ( parseFloat(ltv) > 69 ) {
@@ -340,7 +344,7 @@ $( document ).ready(function() {
             const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
             $("#atoken").text( eth(atokenBal - atokenBeforeBal) );
             $("#debt").text( eth(debtBal - debtBeforeBal) );
-            $("#after").text("After (actual):");
+            $("#after").text("After: (actual)");
         } else {
             // need approvals
             if (approvedSteth >= amt) {
