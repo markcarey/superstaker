@@ -88,7 +88,7 @@ describe.only("Super Staking", function() {
         getFactor(0.68, false);
     });
 
-    it("should delegate credit to the Staker contract", async function() {
+    it.skip("should delegate credit to the Staker contract", async function() {
         const allowanceAmt = "" + ( amt * (factor / 100) );
         console.log("allowanceAmt", allowanceAmt);
         await ( await varDebtWETH.approveDelegation(staker.address, allowanceAmt) ).wait();
@@ -98,21 +98,21 @@ describe.only("Super Staking", function() {
         expect(1).to.equal(1);
     });
   
-    it("should deposit native ETH and SuperStake it", async function() {
+    it.skip("should deposit native ETH and SuperStake it", async function() {
         await ( await staker.stake(factor, {value: amt}) ).wait();
         const data = await pool.getUserAccountData(PUBLIC_KEY);
         console.log(data);
         expect(1).to.equal(1);
     });
 
-    it("should approve stETH transfer to the Staker contract", async function() {
+    it.skip("should approve stETH transfer to the Staker contract", async function() {
         await ( await steth.approve(staker.address, amt) ).wait();
         const allowance = await steth.allowance(PUBLIC_KEY, staker.address);
         console.log(allowance);
         expect(allowance).to.equal(amt);
     });
 
-    it("should impersonate and get some stETH", async function() {
+    it.skip("should impersonate and get some stETH", async function() {
         const eoa = "0x6Cf9AA65EBaD7028536E353393630e2340ca6049";
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
@@ -141,7 +141,7 @@ describe.only("Super Staking", function() {
         expect(1).to.equal(1);
     });
 
-    it("should log balances", async function() {
+    it.skip("should log balances", async function() {
         var balances = {};
         balances.STETH = await steth.balanceOf(PUBLIC_KEY);
         balances.aSTETH = await aSTETH.balanceOf(PUBLIC_KEY);
