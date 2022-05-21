@@ -202,7 +202,9 @@ $( document ).ready(function() {
         $(this).addClass("active");
         $(".card-title").text("SuperStake stETH");
         $(".stake-eth").hide();
-        $(".stake-steth").show();
+        if (accounts.length > 0) {
+            $(".stake-steth").show();
+        }
         $("#amount").val(0.0);
         $(".deposit-symbol").text("stETH");
         $(".deposit-icon-big").attr("src", "/images/steth.png").css("width", "23px");
@@ -216,7 +218,9 @@ $( document ).ready(function() {
         $(this).addClass("active");
         $(".card-title").text("SuperStake ETH");
         $(".stake-steth").hide();
-        $(".stake-eth").show();
+        if (accounts.length > 0) {
+            $(".stake-eth").show();
+        }
         $("#amount").val(0.0);
         $(".deposit-symbol").text("ETH");
         $(".deposit-icon").attr("src", "/images/eth.svg").css("width", "13px");
