@@ -29,6 +29,8 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
     //address public varDebtToken;
     ILendingPool public pool;
 
+    event SuperStaked(uint256 stethShares);
+
     constructor(address payable _weth, address _steth, address _dataProvider, address _pool, address _referral) {
         steth = IStETH(_steth);
         weth = IWETH9(_weth);
@@ -43,7 +45,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
 
     // @dev SuperStakes native ETH sent to the function
     function stake(uint256 factor) payable external nonReentrant {
-        require(msg.value != 0, "ZERO_DEPOSIT");
+        require(msg.value != 0, "0eth");
         uint256 loanAmt = msg.value.mul(factor).div(100);
         _stake(loanAmt);      
     }
@@ -57,8 +59,6 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
     }
 
     function _stake(uint256 loanAmt) internal {
-        // @dev stake ETH in Lido
-        //uint256 shares = steth.submit{value: msg.value}(referral);
 
         // @dev get sender Aave stats TODO: remove vars not needed
         (uint256 totalCollateralETH,
@@ -85,14 +85,12 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         uint256[] memory modes = new uint256[](1);
         modes[0] = 2;
 
-        address onBehalfOf = msg.sender;
-
         console.log("address(this)", address(this));
         console.log("length", assets.length);
         console.log("assets", assets[0]);
         console.log("amounts", amounts[0]);
         console.log("modes", modes[0]);
-        console.log("onBehalfOf", onBehalfOf);
+        console.log("onBehalfOf", msg.sender);
         console.logBytes(abi.encode(msg.sender));
         console.log("referrer", uint16(0));
 
@@ -101,7 +99,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
             assets,
             amounts,
             modes,
-            onBehalfOf,
+            msg.sender,
             abi.encode(msg.sender),
             uint16(0)
         );
@@ -119,7 +117,7 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
         returns (bool)
     {
         console.log("start exec");
-        require(msg.sender == address(pool), 'CALLER_MUST_BE_LENDING_POOL');
+        require(msg.sender == address(pool), '!sender');
         console.log("initiator", initiator);
         console.log("amount", amounts[0]);
         console.log("premium", premiums[0]);
@@ -134,6 +132,8 @@ contract SuperStaker is Ownable, Pausable, ReentrancyGuard, IFlashLoanReceiver {
 
         // @dev stake inital msg.value + flash loan proceeds via Lido
         steth.submit{value: address(this).balance}(referral);
+
+        emit SuperStaked( steth.balanceOf(address(this)) );
 
         // @dev deposit resulting stETH as collateral in Aave
         pool.deposit(address(steth), steth.balanceOf(address(this)), sender, 0);

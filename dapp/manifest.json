@@ -1,0 +1,31 @@
+{
+    "background_color": "#fff",
+    "display": "standalone",
+    "homepage_url": "https://superstaker.xyz",
+    "providedBy": {
+        "name": "SuperStaker",
+        "url": "https://superstaker.xyz"
+    },
+    "icons": [
+        {
+            "src": "/images/superstaker256.png",
+            "sizes": "256x256",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/superstaker512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "orientation": "portrait",
+    "name": "SuperStaker",
+    "description": "SuperStake your ETH and double your APY.",
+    "iconPath": "/images/superstaker256.png",
+    "short_name": "SuperStaker",
+    "start_url": ".",
+    "theme_color": "#ff007a",
+    "skylink": "todo"
+}

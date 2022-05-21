@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="shorcut icon" type="image/png" href="https://superstaker.xyz/images/superstaker.png">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="">
+
+    <link rel="apple-touch-icon" href="/images/superstaker.png">
+    <link rel="manifest" href="/manifest.json">
+    <title>SuperStaker</title>
+    <link href="css/styles.css?v=1" rel="stylesheet">
+
+    <style id="detectElementResize" type="text/css">
+        @keyframes resizeanim {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        .resize-triggers {
+            animation: 1ms resizeanim;
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .resize-triggers,
+        .resize-triggers>div,
+        .contract-trigger:before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .resize-triggers>div {
+            background: #eee;
+            overflow: auto;
+        }
+
+        .contract-trigger:before {
+            width: 200%;
+            height: 200%;
+        }
+    </style>
+</head>
+
+<body class="" style=""><noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+        <div class="App light">
+            <nav class="navbar navbar-expand-sm navbar-light bg-light">
+                <div class="container-fluid"><a class="navbar-brand navbar-brand-custom" href="/"><img
+                            src="/images/superstaker64.png" alt="Logo" width="48" height="48"
+                            class="d-inline-block align-top">SuperStaker</a>
+                    <div class=" float-right top-nav-links" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-lg-0">
+                            <li class="nav-item"><a class="nav-link active nav-deposit" aria-current="page" href="#">SuperStake ETH</a></li>
+                            <li class="nav-item"><a class="nav-link nav-withdraw" aria-current="page" href="#">SuperStake stETH</a></li>
+                        </ul>
+                    </div>
+                    <div class="app-wallet-details"><button
+                            class="d-flex btn false btn-custom-secondary btn-round-switch  ">
+                            <img class="hide" src="data:image/png;base64,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" alt="Polygon">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAMAAAAOusbgAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABiVBMVEUAAABggN9ggOtgfephfOhif+phfephfupifuthfupifelifeljfu1ifupjfuxggOdif+tifepjfOlifupifutifehif+tifetifupggOpgfOlhfulgeupgcN9hfOlge+difepifetifephfuhggO9hfulhfupgf+thfulhfuphfulhfupgfehifulhfuphfOhifupgfedgf+phfulhfepgfOdif+pgfuphfupif+thfuhifuqdrvJ5ke1shuvr7/y0wfRoguuxv/X////Ay/aRpfB2juxth+vi5/uouPOFm+66xvXEzveWqfGnt/OLoO/19/6is/LO1/h/lu67x/b7+/64xPXv8v3Y3/mBl+6ZqvHQ2PiRpPCsu/OcrvGTpvDj6PvI0feJne+pt/Pg5fqdrvGwvvShsfK8yPaJnu9/le1yiuxkf+puiOt1jexmgep0jex5kO1qhOtwieyXqfGmtvPEz/eLn+/Y3/p9lO1nguvr7/1zjOyXqvFuh+t2ju2TpvFog+uot/OKjE3BAAAAO3RSTlMAEEBgkJ+/3+/Pr4Bv318gr59Q739wj4/PMFBfMBCgQGCvcLAQoJBA387e73CA7o/+YDDOvkCeb96uj8ylIG8AAAABYktHRENn0A1iAAAAB3RJTUUH5QMNCwgXeMhisgAABVBJREFUaN7Fm/lfG0UYxnOUDSEJoaSooAha1DbUdFVa1E1JzGxTILGlYo9UvKqoUFGrRWk9av3L3d3ZI5vMJu8zO/vp8xPwycyX95o7qRSqdCZ7akLL5SYNW7m8NlUoZtJwN5gyxamcIVRpqphJCJouapPGSE1OTZcToBokaUrZmZlJGtbRaVU+zxCNDZSfVoCdLaFYJ9fionFrfXQch5elsU6spdOsiKSUQJUzz8Fc198SRsc11zV6DsSmX1CBtfUi5uaXVHExd89L1W588qyS8AaqLNC402qxtl5+TlwSOREugTybDNcwxsR5XnFeBaq8MopbVlpHYY2qqnSCXGt5sBgJVjZOihU5ehaT5RpGxIxRTiyxPFXEYU40wFyaiHsmea7Q2RKOrl+Bmwic/SrcyUaj+RHcaMjZS7jbWsy8ircaXPXimdVmzDSvxTV5Gf/XN23wFt5uIabBdWaDzW24YSmewe0GB3fw/OqPMr6o7DIONj+Gm2pxUrrNPLCJF3NgMl7DjQCM59dpf9CCm15nAdi8gbauLMqmVnunH9yBi9kbseFtYZf1g82baHtN0tN1Fgbj+bUo5+nGIBieLLivXwNbtdggGJ4suK8rWKM2Gwaj+VWRGT0+EYDhYrbHkNexJnUmApu7WC9zcIjbDTEYzK+zcIg/ZWIwOFlYc+MKZjCLAoPFvAjmViMajOVXBsut6yHurdshMjRZLKcKiKP7Db5z1+zd60dDi5FTUFJ3+7CfWaher7f3eUD+AuhqApmavvR9/NXXDqln6/43MvmlIcst19G3vu26oB7X/X3X4016XyVgYdtyQ9v1Lez5coNNnyxKKfJH235oBWAr2N9Bk0WFDu5aoQ1hw2AebHoxk8H1ILQRYAv9/W1yfpHBPwxhh8GWDpSDjT0C+PDBj2QwfXI62h8H/ulncmcGtE/8pTkK/PBXoCt6HfPgbTejwIe/OR+grkTy5CFzd9Pp8+iRGMyDe2XriNidlnqD6pxj9nvbQe8Pgx86wb120/yD2tvZ1JvUjxonjLXC/naxj53gPrnaMffJnRWAfcTGn4w16s6Pe80AfPiAh8L6U5PqaHuZCSx9DuzR+qTP3zb3Lze44LT4FrTY6zjzkxvqpg3mJfTkb3BucrZtSCFvOmTX39vNx/84P9zooLOxcQ5c0D91d+SNf+3fnnEvu6nWoQeYL+ihZeaxt/rh/rZKaMurLejEaw7etAXrvdYGLyFX9EqylYG3qXZNuWrUt32s2XyG9FKROAI5EO8kkADzEMP71GMRGDwS4Bd+2LbNGToHwf+BXZSljpu8muo7fMEc7Z9mgr4OdhRSlWQEV6sr4PGLO3T64Edgc8O/ESHPya68moI3LlwT8sfGuzt9YDDAoZNy+DTzOACTFx2ezse6/DnxwNhQaSt0a38Obe2EWaKSDKMauoVZgP/vAw7GLwYGningT5k6Nhi/agsbLHXFt8nwShq+4pMw+ekOtOjgmhjkpsro8GXVFH7Ntiq4M7+Auw3X2ymBFDyVG6eqiCvjbFC1iDcoiTs78gEffQMnpYtR3NRKPkludcTr7zI8ZgPckU/35hNLsNqYJ4P4bEGTPvbB4DvJcJfHcZMhU7hJkGlcK86KM6xGfBCquqqq71K5asnvQW+sV1SNnvpF9NsqF5QEuoY+7Fbjbn1N7v1+IabRMua6RqO7ORXmci3J+ltfuxQDaysrg9arcbEOGl0exLfWdzgQa712WRXWVjlLWvzq+tq68q+3lbMzq6OhtQSons/XhXBd19//YF2lh0VKL60XZrQ8/zbfai63dvnD7CXc0v8BLUFxRwNgnswAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDMtMTNUMTE6MDg6MTgrMDA6MDC6h83UAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTAzLTEzVDExOjA4OjE4KzAwOjAwy9p1aAAAAABJRU5ErkJggg==" alt="Ethereum">
+                            <span>localhost</span></button><button class="d-flex btn false
+        btn-custom-secondary connect
+      "><span><img src="/images/wallet-light.svg" width="26" alt="Wallet"
+                                    class="d-inline-block px-1">Connect wallet</span></button><button type="button"
+                            class="d-flex btn false ml-3 btn-theme-icon-header btn btn-secondary"><img width="20"
+                                src="/images/sun.svg" alt="theme"></button></div>
+                </div>
+            </nav>
+            <nav class="navbar navbar-expand-sm navbar-light bg-light footer-nav-bar">
+                <div class="app-wallet-details-footer"><button
+                        class="d-flex btn false btn-custom-secondary btn-round-switch  network-info-footer"><img
+                            src="data:image/png;base64,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"
+                            alt="Ethereum Mainnet"><span>Ethereum</span></button><button class="d-flex btn false
+        btn-custom-secondary
+      "><span><img src="/images/wallet-light.svg" width="26" alt="Wallet"
+                                class="d-inline-block px-1 connect">Connect wallet</span></button></div>
+                <div class="app-settings-group"><button type="button"
+                        class="d-flex btn false btn-theme-icon-footer btn btn-secondary"><img width="20"
+                            src="/images/sun.svg" alt="theme"></button></div>
+            </nav>
+            <div class="app-bg height-100">
+                <div class="bg-vector light">
+                    <div class="pt-6" style="height: 100%; overflow: auto;">
+                        <div class="network-warning"></div>
+                        <div class="card content-card">
+                            <div class="content-title">
+                                <div class="card-title content-card-title">SuperStake ETH</div>
+                            </div>
+                            <div class="card-body" style="padding: 1rem 2rem;">
+                                <div class="swap-root">
+                                    <div class="light card field-card">
+                                        <div class="card-body py-2">
+                                            <div class="row">
+                                                <div class=" col-6 col-md-6">
+                                                    <label class="form-label">Amount</label>
+                                                    <input type="text" id="amount" class="form-control field-input" placeholder="0.0" value="">
+                                                </div>
+                                                <div class=" col-6 col-md-6">
+                                                    <div class="align-end"><label class="form-balance-label"></label>
+                                                    </div>
+                                                    <div class="align-end">
+                                                        <button class="btn btn-curr ml-2 max" style="background-color: lightgrey">
+                                                            <p class="curr-text">MAX</p>
+                                                        </button>
+                                                        <button class="btn btn-curr ml-2"><img
+                                                                class="curr-image"
+                                                                src="/images/eth.svg"
+                                                                alt="">
+                                                            <p class="curr-text">ETH</p>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body py-2">
+                                            <div class="row">
+                                                <div class=" col-6 col-md-6">
+                                                    <label class="form-label">Target LTV</label>
+                                                    <input type="text" id="ltv" class="form-control field-input" placeholder="69" value="69">
+                                                </div>
+                                                <div class=" col-6 col-md-6">
+                                                    <div class="align-end"><label class="form-balance-label"></label>
+                                                    </div>
+                                                    <div class="align-end">
+                                                        <button class="btn btn-curr ml-2 ltv-max" style="background-color: lightgrey">
+                                                            <p class="curr-text">MAX</p>
+                                                        </button>
+                                                        <button class="btn btn-curr ml-2"><img
+                                                            class="curr-image"
+                                                            src="/images/percent.png"
+                                                            alt="">
+                                                            <p class="curr-text">LTV</p>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-grid py-3 card-buttons">
+                                        <button class="btn btn-lg btn-custom-primary connect">Connect Wallet</button>
+                                        <button class="btn btn-lg btn-custom-primary stake-eth hide">1 of 2: Approve</button>
+                                        <button class="btn btn-lg btn-custom-primary stake-steth hide">SuperStake stETH</button>
+                                    </div>
+                                    <div class="price_head">
+                                        <div class="price_aa">
+                                            <div class="price-list">
+                                                <p class="before">Before:</p><span class="price since"></span>
+                                            </div>
+                                            <div class="price-list">
+                                                <p>ETH</p><span
+                                                    class="price"><span id="ethBal">0.00</span><img
+                                                        src="/images/eth.svg"
+                                                        alt="logo" width="13"><span>ETH</span></span><span></span>
+                                            </div>
+                                            <hr>
+                                            <div class="price-list">
+                                                <p class="before">After:</p><span class="price since"></span>
+                                            </div>
+                                            <div class="price-list">
+                                                <p>ETH</p><span
+                                                    class="price"><span class="tvl">0.00</span><img
+                                                        src="/images/eth.svg"
+                                                        alt="logo" width="13"><span>ETH</span></span><span></span>
+                                            </div>
+                                            <div class="price-list">
+                                                <p>Aave stETH</p><span class="price"><span class="balance">0</span><a href="#" class="add"><img
+                                                src="/images/steth.png"
+                                                alt="logo" width="18"><span>aSTETH</span><img src="/images/metamask.png" alt="logo" width="13"></a></span>
+                                            </div>
+                                            <div class="price-list">
+                                                <p>Aave WETH Debt</p><span class="price"><span class="balance">0</span><img
+                                                src="/images/weth.svg"
+                                                alt="logo" width="18"><span>WETH</span>
+                                            </div>
+                                            <hr>
+                                            <div class="price-list">
+                                                <p class="before">APY (est.)</p><s<span class="price share">0.0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="version-denote">v 0.0.1</div>
+            </div>
+        </div>
+    </div>
+
+    <!--  Scripts-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@alch/alchemy-web3@latest/dist/alchemyWeb3.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.1.umd.min.js" type="text/javascript"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="/js/abis.js?v=1"></script>
+    <script src="/js/dapp.js?v=1"></script>
+
+</body>
+
+
+</html>

@@ -24,10 +24,11 @@ module.exports = {
    defaultNetwork: "hardhat",
    networks: {
     hardhat: {
+      chainId: 1337,
       accounts: [{ privateKey: `0x${PRIVATE_KEY}`, balance: "10000000000000000000000"}],
       forking: {
         url: API_URL,
-        blockNumber: 14799179  // assumes ETH mainnet fork
+        blockNumber: 14813353  // assumes ETH mainnet fork
       },
       loggingEnabled: true,
       gasMultiplier: 7,
@@ -45,4 +46,4 @@ module.exports = {
 }
 
 // 
-// npx hardhat node --fork https://eth-mainnet.alchemyapi.io/v2/y2J0jJRJ0W0l7e7J1CVv4zRj-GgBjNHP --fork-block-number 14799179
+// npx hardhat node --fork https://eth-mainnet.alchemyapi.io/v2/y2J0jJRJ0W0l7e7J1CVv4zRj-GgBjNHP --fork-block-number 14813353
