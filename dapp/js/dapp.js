@@ -317,6 +317,10 @@ $( document ).ready(function() {
 
     $(".stake-steth").click(async function(){
         mode = "steth";
+        const stakeFilter = await staker.filters.SuperStaked();
+        staker.on(stakeFilter, async (shares, event) => { 
+            console.log("stETH staked", shares, event);
+        });
         var amt = $("#amount").val();
         var ltv = $("#ltv").val();
         var amtInWei = ethers.utils.parseEther("" + amt);
@@ -325,6 +329,8 @@ $( document ).ready(function() {
         console.log(parseFloat(ltv) - 1);
         if ( approved >= amt ) {
             $("button.stake-steth").text("Waiting...");
+            const atokenBeforeBal = await aSTETH.balanceOf(ethereum.selectedAddress);
+            const debtBeforeBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
             console.log("factor", factor);
             var tx = await staker.connect(ethersSigner).superStake(amtInWei, factor);
             console.log(tx);
@@ -332,8 +338,8 @@ $( document ).ready(function() {
             $("button.stake-steth").text("SuperStaked!!");
             const atokenBal = await aSTETH.balanceOf(ethereum.selectedAddress);
             const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
-            $("#atoken").text( eth(atokenBal) );
-            $("#debt").text( eth(debtBal) );
+            $("#atoken").text( eth(atokenBal - atokenBeforeBal) );
+            $("#debt").text( eth(debtBal - debtBeforeBal) );
             $("#after").text("After (actual):");
         } else {
             // need approvals
