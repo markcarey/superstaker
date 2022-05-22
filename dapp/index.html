@@ -67,6 +67,7 @@
                         <ul class="navbar-nav me-auto mb-lg-0">
                             <li class="nav-item"><a class="nav-link active nav-eth" aria-current="page" href="#">SuperStake ETH</a></li>
                             <li class="nav-item"><a class="nav-link nav-steth" aria-current="page" href="#">SuperStake stETH</a></li>
+                            <li class="nav-item"><a class="nav-link docs" id="docs-link" target="_blank" aria-current="page" href="https://docs.superstaker.xyz">Docs</a></li>
                         </ul>
                     </div>
                     <div class="app-wallet-details"><button
@@ -97,7 +98,27 @@
                 <div class="bg-vector light">
                     <div class="pt-6" style="height: 100%; overflow: auto;">
                         <div class="network-warning"></div>
-                        <div class="card content-card">
+
+                        <div id="about" class="card content-card" style="text-align: center;width: 70%; max-width: none">
+                            <div class="content-title">
+                                <div class="card-title content-card-title">SuperStaker boosts your staking APR with Lido and Aave</div>
+                            </div>
+                            <div class="card-body" style="padding: 1rem 2rem;">
+                                <p style="font-size: 1.3rem">Start with ETH or stETH and end up with even more stTETH deposited in Aave and WETH debt, boosting your staking rewards up to 2X.</p>
+                                <iframe width="672" height="378" src="https://www.youtube.com/embed/1KOah5Lce0s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                <div class="d-grid py-3 card-buttons" style="text-align: center; width: 50%; margin: 0 auto;">
+                                    <button class="btn btn-lg btn-custom-primary learn">Learn More</button>
+                                    <p></p>
+                                    <button class="btn btn-lg btn-custom-primary start">Get Started</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div id="app" class="card content-card" style="display: none;">
                             <div class="content-title">
                                 <div class="card-title content-card-title">SuperStake ETH</div>
                             </div>
@@ -192,6 +213,9 @@
                                             <hr>
                                             <div class="price-list">
                                                 <p class="before">Super APR (est.)</p><s<span id="apr" class="price share">0.0%</span>
+                                            </div>
+                                            <div class="price-list">
+                                                <p class="before">Super APR (post-Merge)</p><s<span id="apr" class="price share">even higher</span>
                                             </div>
                                         </div>
                                     </div>

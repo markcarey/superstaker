@@ -277,6 +277,18 @@ $( document ).ready(function() {
         return false;
     });
 
+    $(".learn").click(function(){
+        //$("#docs-link").click();
+        window.location = "https://docs.superstaker.xyz";
+        return false;
+    });
+
+    $(".start").click(function(){
+        $("#about").hide();
+        $("#app").show();
+        return false;
+    });
+
     $(".nav-steth").click(function(){
         $(this).parent().siblings().find(".nav-link").removeClass("active");
         $(this).addClass("active");
