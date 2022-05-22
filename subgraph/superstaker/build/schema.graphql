@@ -1,0 +1,4 @@
+type TotalStaked @entity {
+  id: ID!
+  total: BigInt!
+}

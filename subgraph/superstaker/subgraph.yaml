@@ -1,0 +1,27 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: SuperStaker
+    network: mainnet
+    source:
+      address: "0xDA3231D0Ad3dd50C1B33c167DB27e6200f2C92D0"
+      abi: SuperStaker
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - OwnershipTransferred
+        - Paused
+        - SuperStaked
+        - Unpaused
+        - TotalStaked
+      abis:
+        - name: SuperStaker
+          file: ./abis/SuperStaker.json
+      eventHandlers:
+        - event: SuperStaked(uint256)
+          handler: handleSuperStaked
+      file: ./src/mapping.ts
