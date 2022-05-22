@@ -1,7 +1,7 @@
 const rpcURL = "eth-mainnet.alchemyapi.io/v2/y2J0jJRJ0W0l7e7J1CVv4zRj-GgBjNHP"
 
-//var web3 = AlchemyWeb3.createAlchemyWeb3("wss://" + rpcURL);
-var web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545");
+var web3 = AlchemyWeb3.createAlchemyWeb3("wss://" + rpcURL);
+//var web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545");
 var BN = web3.utils.BN;
 var gas = web3.utils.toHex(new BN('2000000000000')); // 2000 Gwei;
 var dappChain = 1; // default to Mumbai
@@ -178,7 +178,8 @@ async function onConnect() {
         location.reload();
     });
 
-    web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545", { writeProvider: web3Modalprovider });
+    //web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545", { writeProvider: web3Modalprovider });
+    web3 = AlchemyWeb3.createAlchemyWeb3("https://" + rpcURL, { writeProvider: web3Modalprovider });
     provider = new ethers.providers.Web3Provider(web3Modalprovider);
   
     main();
@@ -343,15 +344,15 @@ $( document ).ready(function() {
         console.log(parseFloat(ltv) - 1);
         if ( approved >= amt ) {
             $("button.stake-eth").text("Waiting...");
-            const atokenBeforeBal = await aSTETH.balanceOf(ethereum.selectedAddress);
-            const debtBeforeBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
+            const atokenBeforeBal = await aSTETH.balanceOf(selectedAddress);
+            const debtBeforeBal = await varDebtWETH.balanceOf(selectedAddress);
             console.log("factor", factor);
             var tx = await staker.connect(ethersSigner).stake(factor, {value: amtInWei});
             console.log(tx);
             await tx.wait();
             $("button.stake-eth").text("SuperStaked!!");
-            const atokenBal = await aSTETH.balanceOf(ethereum.selectedAddress);
-            const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
+            const atokenBal = await aSTETH.balanceOf(selectedAddress);
+            const debtBal = await varDebtWETH.balanceOf(selectedAddress);
             $("#atoken").text( eth(atokenBal - atokenBeforeBal) );
             $("#debt").text( eth(debtBal - debtBeforeBal) );
             $("#after").text("After: (actual)");
@@ -396,15 +397,15 @@ $( document ).ready(function() {
         console.log(parseFloat(ltv) - 1);
         if ( approved >= amt ) {
             $("button.stake-steth").text("Waiting...");
-            const atokenBeforeBal = await aSTETH.balanceOf(ethereum.selectedAddress);
-            const debtBeforeBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
+            const atokenBeforeBal = await aSTETH.balanceOf(selectedAddress);
+            const debtBeforeBal = await varDebtWETH.balanceOf(selectedAddress);
             console.log("factor", factor);
             var tx = await staker.connect(ethersSigner).superStake(amtInWei, factor);
             console.log(tx);
             await tx.wait();
             $("button.stake-steth").text("SuperStaked!!");
-            const atokenBal = await aSTETH.balanceOf(ethereum.selectedAddress);
-            const debtBal = await varDebtWETH.balanceOf(ethereum.selectedAddress);
+            const atokenBal = await aSTETH.balanceOf(selectedAddress);
+            const debtBal = await varDebtWETH.balanceOf(selectedAddress);
             $("#atoken").text( eth(atokenBal - atokenBeforeBal) );
             $("#debt").text( eth(debtBal - debtBeforeBal) );
             $("#after").text("After: (actual)");

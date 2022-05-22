@@ -39,7 +39,7 @@ module.exports = {
       url: API_URL,
       accounts: [`0x${PRIVATE_KEY}`],
     }
-   },
+  },
    etherscan: {
     apiKey: ETHERSCAN_API_KEY
   }
