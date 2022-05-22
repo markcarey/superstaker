@@ -1,7 +1,7 @@
 const rpcURL = "eth-mainnet.alchemyapi.io/v2/y2J0jJRJ0W0l7e7J1CVv4zRj-GgBjNHP"
 
-var web3 = AlchemyWeb3.createAlchemyWeb3("wss://" + rpcURL);
-//var web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545");
+//var web3 = AlchemyWeb3.createAlchemyWeb3("wss://" + rpcURL);
+var web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545");
 var BN = web3.utils.BN;
 var gas = web3.utils.toHex(new BN('2000000000000')); // 2000 Gwei;
 var dappChain = 1; // default to Mumbai
@@ -22,7 +22,8 @@ var aaveWETHBorrowRate = 0.0164;  // TODO: get from api or contract
 var selectedAddress;
 
 // addresses:
-const stakerAddress = "0xDA3231D0Ad3dd50C1B33c167DB27e6200f2C92D0";
+//const stakerAddress = "0xDA3231D0Ad3dd50C1B33c167DB27e6200f2C92D0";  // mainnet
+const stakerAddress = "0x3D1A841bC5F799C9887D30dbFA7827A01DC56673"; // localhost
 const wethAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
 const stethAddress = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 const dataProviderAddress = "0x057835Ad21a177dbdd3090bB1CAE03EaCF78Fc6d";
@@ -324,7 +325,7 @@ $( document ).ready(function() {
         if (mode == "steth") {
             isSteth = true;
         }
-        getFactor( (parseFloat(ltv) - 1)/100, isSteth );
+        getFactor( (parseFloat(ltv) - 2)/100, isSteth );
         const allowanceAmt = "" + ( amtInWei * (factor / 100) );
         $("#debt").text( eth(allowanceAmt) );
         const stethTotal = parseFloat(amt) + parseFloat( eth(allowanceAmt) );
@@ -371,7 +372,7 @@ $( document ).ready(function() {
             console.log("stethInETH", stethInETH);
             ratio = stethInETH / 1e18;
             console.log("ratio", ratio);
-            getFactor( (parseFloat(ltv) - 1)/100, false );
+            getFactor( (parseFloat(ltv) - 2)/100, false );
             const allowanceAmt = "" + ( amtInWei * (factor / 100) );
             var tx = await varDebtWETH.connect(ethersSigner).approveDelegation(stakerAddress, allowanceAmt);
             console.log(tx);
@@ -425,7 +426,7 @@ $( document ).ready(function() {
                 console.log("stethInETH", stethInETH);
                 ratio = stethInETH / 1e18;
                 console.log("ratio", ratio);
-                getFactor( (parseFloat(ltv) - 1)/100, true );
+                getFactor( (parseFloat(ltv) - 2)/100, true );
                 const allowanceAmt = "" + ( amtInWei * (factor / 100) );
                 var tx = await varDebtWETH.connect(ethersSigner).approveDelegation(stakerAddress, allowanceAmt);
                 console.log(tx);

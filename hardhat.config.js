@@ -28,7 +28,7 @@ module.exports = {
       accounts: [{ privateKey: `0x${PRIVATE_KEY}`, balance: "10000000000000000000000"}],
       forking: {
         url: API_URL,
-        blockNumber: 14813353  // assumes ETH mainnet fork
+        blockNumber: 14822965  // assumes ETH mainnet fork
       },
       loggingEnabled: true,
       gasMultiplier: 7,
