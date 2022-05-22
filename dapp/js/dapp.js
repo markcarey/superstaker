@@ -21,6 +21,18 @@ var lidoApr = 0.038;  // TODO: get from api or contract
 var aaveWETHBorrowRate = 0.0164;  // TODO: get from api or contract
 var selectedAddress;
 
+// subgraph
+var subgraphURL = "https://api.studio.thegraph.com/query/27916/superstaker/v0.0.1";
+var query = "{totalStakeds(first: 1){total}}";
+var options = {
+    "method": "post",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": query
+};
+var totalStaked = 0;
+
 // addresses:
 const stakerAddress = "0xDA3231D0Ad3dd50C1B33c167DB27e6200f2C92D0";  // mainnet
 //const stakerAddress = "0x3D1A841bC5F799C9887D30dbFA7827A01DC56673"; // localhost
@@ -87,6 +99,11 @@ function eth(wei) {
 async function main() {
     dappChain = await web3.eth.getChainId();
     console.log("The chainId is " + dappChain);
+
+    const res = await fetch(subgraphURL, options);
+    const results = await res.json();
+    totalStaked = results.data.totalStakeds[0].total;
+    console.log("total staked", ethers.utils.fromWei(totalStaked));
 
     accounts = await web3.eth.getAccounts();
     //connectWallet();
