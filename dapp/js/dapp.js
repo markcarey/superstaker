@@ -106,6 +106,8 @@ async function main() {
     const results = await res.json();
     totalStaked = results.data.totalStakeds[0].total;
     console.log("total staked", eth(totalStaked));
+    totalStaked = parseFloat(web3.utils.fromWei(totalStaked.toString())).toFixed(1);
+    $("#total-staked").text( totalStaked + " stETH" );
 
     accounts = await web3.eth.getAccounts();
     //connectWallet();

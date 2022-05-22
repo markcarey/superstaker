@@ -25181,3 +25181,9 @@ input[type=number] {
 .navbar-brand-custom:link, .navbar-brand-custom:hover, .navbar-brand-custom:visited {
     color: #2f4f74;
 }
+
+#total-staked {
+    color: #2f4f74;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
