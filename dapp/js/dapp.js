@@ -19,6 +19,7 @@ var ratio = 1;
 var mode = "eth";
 var lidoApr = 0.038;  // TODO: get from api or contract
 var aaveWETHBorrowRate = 0.0164;  // TODO: get from api or contract
+var selectedAddress;
 
 // addresses:
 const stakerAddress = "0xDA3231D0Ad3dd50C1B33c167DB27e6200f2C92D0";
@@ -35,6 +36,28 @@ var provider = new ethers.providers.JsonRpcProvider(prov);
 if (window.ethereum) {
     provider = new ethers.providers.Web3Provider(window.ethereum);
 }
+var ethersProvider;
+var web3Modalprovider;
+
+const Web3Modal = window.Web3Modal.default;
+const WalletConnectProvider = window.WalletConnectProvider.default;
+
+const providerOptions = {
+    walletconnect: {
+        package: WalletConnectProvider,
+        options: {
+            rpc: {
+                1: "https://" + rpcURL,
+                1337: "http://localhost:8545"
+            }
+        }
+    }
+};
+
+var web3Modal = new Web3Modal({
+    cacheProvider: true, // optional
+    providerOptions, // required
+});
 
 const varDebtWETH = new ethers.Contract(varDebtTokenAddress, debtTokenABI, provider);
 const aSTETH = new ethers.Contract(varATokenAddress, astethABI, provider);
@@ -50,7 +73,8 @@ var ethersSigner;
 
 function abbrAddress(address){
     if (!address) {
-        address = ethereum.selectedAddress;
+        //address = ethereum.selectedAddress;
+        address = selectedAddress;
     }
     return address.slice(0,4) + "..." + address.slice(address.length - 4);
 }
@@ -65,12 +89,16 @@ async function main() {
 
     accounts = await web3.eth.getAccounts();
     //connectWallet();
+    console.log("b4 accounts");
     if (accounts.length > 0) {
-        ethersSigner = provider.getSigner();
-        console.log("Account:", await ethersSigner.getAddress()); 
+        console.log("accounts > 0");
+        ethersSigner = await provider.getSigner()
+        //ethersSigner = provider.getSigner();
+        selectedAddress = await ethersSigner.getAddress();
+        console.log("Account:", selectedAddress); 
         $(".app-wallet-details button.connect span").text( abbrAddress() );
-        stethBal = await steth.balanceOf(ethereum.selectedAddress);
-        ethBal = await provider.getBalance(ethereum.selectedAddress);
+        stethBal = await steth.balanceOf(selectedAddress);
+        ethBal = await provider.getBalance(selectedAddress);
         console.log("ETH", ethBal);
         console.log("stETH", stethBal);
         //$("#ethBal").text(eth(ethBal));
@@ -125,6 +153,36 @@ async function connectWallet() {
         console.log("window.ethereum false");
     } 
 } // connectWallet()
+
+async function onConnect() {
+
+    console.log("Opening a dialog", web3Modal);
+    try {
+        web3Modalprovider = await web3Modal.connect();
+    } catch(e) {
+        console.log("Could not get a wallet connection", e);
+      return;
+    }
+  
+    // Subscribe to accounts change
+    provider.on("accountsChanged", (accounts) => {
+        web3.eth.getAccounts(function (error, accts) {
+            console.log(accts[0], 'current account after account change');
+            accounts = accts;
+            location.reload();
+        });
+    });
+  
+    // Subscribe to chainId change
+    provider.on("chainChanged", (chainId) => {
+        location.reload();
+    });
+
+    web3 = AlchemyWeb3.createAlchemyWeb3("http://localhost:8545", { writeProvider: web3Modalprovider });
+    provider = new ethers.providers.Web3Provider(web3Modalprovider);
+  
+    main();
+  }
 
 function fromWei(amount) {
     return web3.utils.fromWei(new BN(amount));
@@ -193,7 +251,8 @@ $( document ).ready(function() {
     main();
 
     $(".connect").click(function(){
-        connectWallet();
+        //connectWallet();
+        onConnect();
         return false;
     });
 
