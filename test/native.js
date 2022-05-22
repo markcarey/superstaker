@@ -112,7 +112,7 @@ describe.only("Super Staking", function() {
         expect(allowance).to.equal(amt);
     });
 
-    it.skip("should impersonate and get some stETH", async function() {
+    it("should impersonate and get some stETH", async function() {
         const eoa = "0x6Cf9AA65EBaD7028536E353393630e2340ca6049";
         await hre.network.provider.request({
             method: "hardhat_impersonateAccount",
