@@ -23,14 +23,14 @@ var selectedAddress;
 
 // subgraph
 var subgraphURL = "https://api.studio.thegraph.com/query/27916/superstaker/v0.0.1";
-var query = "{totalStakeds(first: 1){total}}";
+var query = `{\n  totalStakeds(first: 1) {\n    total\n  }\n}`;
 var options = {
-    "method": "post",
-    "mode": "no-cors",
-    "headers": {
-        "Content-Type": "application/json"
+    method: "POST",
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
     },
-    "body": query
+    body: JSON.stringify({"query": query})
 };
 var totalStaked = 0;
 
@@ -102,9 +102,10 @@ async function main() {
     console.log("The chainId is " + dappChain);
 
     const res = await fetch(subgraphURL, options);
+    console.log(res);
     const results = await res.json();
     totalStaked = results.data.totalStakeds[0].total;
-    console.log("total staked", ethers.utils.fromWei(totalStaked));
+    console.log("total staked", eth(totalStaked));
 
     accounts = await web3.eth.getAccounts();
     //connectWallet();
