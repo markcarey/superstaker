@@ -26,6 +26,7 @@ var subgraphURL = "https://api.studio.thegraph.com/query/27916/superstaker/v0.0.
 var query = "{totalStakeds(first: 1){total}}";
 var options = {
     "method": "post",
+    "mode": "no-cors",
     "headers": {
         "Content-Type": "application/json"
     },
