@@ -50,12 +50,17 @@ The final step that the SuperStaker transaction takes is to deposit the stETH co
 - Feature to unwind or rebalance based a new target LTV. (But maybe this feature isn't needed as Aave's "repay with collateral" feature may suffice here)
 - Other? Ideas welcome!
 
+EthGlobal HackMoney Submission: https://showcase.ethglobal.com/hackmoney2022/superstaker-xmfnv
+
 Live on Etheruem Mainnet: https://etherscan.io/address/0xda3231d0ad3dd50c1b33c167db27e6200f2c92d0
+
 Wallets supported: Metamask, WalletConnect
 
 Subgraph: https://thegraph.com/explorer/subgraph?id=FnzRRPgTa4rdSpDHmAkeYbTDoMf1YuA7FkoDTPTz1RC1&view=Overview
 
 App: https://superstaker.xyz
+
+Docs: App: https://docs.superstaker.xyz
 
 Twitter: https://twitter.com/super_staker
 
