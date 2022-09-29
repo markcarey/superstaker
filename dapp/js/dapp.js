@@ -17,8 +17,8 @@ var aDebtBal = 0;
 var factor = 0;
 var ratio = 1;
 var mode = "eth";
-var lidoApr = 0.038;  // TODO: get from api or contract
-var aaveWETHBorrowRate = 0.0164;  // TODO: get from api or contract
+var lidoApr = 0.054;  // TODO: get from api or contract
+var aaveWETHBorrowRate = 0.0222;  // TODO: get from api or contract
 var selectedAddress;
 
 // subgraph
