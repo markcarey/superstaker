@@ -17,7 +17,7 @@ var aDebtBal = 0;
 var factor = 0;
 var ratio = 1;
 var mode = "eth";
-var lidoApr = 0.054;  // TODO: get from api or contract
+var lidoApr = 0.055;  // TODO: get from api or contract
 var aaveWETHBorrowRate = 0.0222;  // TODO: get from api or contract
 var selectedAddress;
 
@@ -335,7 +335,7 @@ $( document ).ready(function() {
     });
 
     $(".ltv-max").click(function(){
-        var max = "69";
+        var max = "72";
         $("#ltv").val(max);
         return false;
     });
@@ -392,8 +392,8 @@ $( document ).ready(function() {
             $("#after").text("After: (actual)");
         } else {
             // need approval
-            if ( parseFloat(ltv) > 69 ) {
-                alert("The maximum LTV allowed by Aave is 69, anon");
+            if ( parseFloat(ltv) > 72 ) {
+                alert("The maximum LTV allowed by Aave is 72, anon");
                 return;
             }
             if ( (amt.length < 1) || ( parseFloat(amt) <= 0 ) ) {
@@ -446,8 +446,8 @@ $( document ).ready(function() {
         } else {
             // need approvals
             if (approvedSteth >= amt) {
-                if ( parseFloat(ltv) > 69 ) {
-                    alert("The maximum LTV allowed by Aave is 69, anon");
+                if ( parseFloat(ltv) > 72 ) {
+                    alert("The maximum LTV allowed by Aave is 72, anon");
                     return;
                 }
                 if ( (amt.length < 1) || ( parseFloat(amt) <= 0 ) ) {
